@@ -1,0 +1,15 @@
+SELECT
+    email AS User,
+    gemini_for_workspace.app_name AS App,
+    gemini_for_workspace.action AS Action,
+    COUNT(*) AS Count
+FROM {{ BIGQUERY.TABLE }}
+WHERE
+    date(_partitiontime) BETWEEN DATE_SUB(CURRENT_DATE("America/New_York"), INTERVAL 28 DAY) AND CURRENT_DATE("America/New_York")
+    AND event_name = "feature_utilization"
+    AND gemini_for_workspace.event_category <> "inactive"
+    AND gemini_for_workspace.event_category <> "unknown"
+GROUP BY
+    User,
+    App,
+    Action
